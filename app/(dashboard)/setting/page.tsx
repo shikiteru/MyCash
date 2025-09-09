@@ -65,11 +65,11 @@ export default function SettingDashboard() {
   return (
     <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
       <div className="w-full h-full mt-16">
-        <Card className="p-2 w-[90%] md:w-[50%] mx-auto">
+        <Card className="p-2 w-full md:w-[50%] mx-auto">
           <CardHeader>
             <h2 className="text-xl font-semibold ">Setting</h2>
           </CardHeader>
-          <CardBody className="flex gap-3">
+          <CardBody className="flex gap-6">
             <div className="flex flex-row gap-2 items-center">
               <Input
                 className="max-w-full"

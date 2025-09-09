@@ -49,54 +49,54 @@ export default function HomeDashboard() {
   const saldo = data?.saldo?.toLocaleString("id") ?? 0;
 
   return (
-    <section className="flex flex-col items-center justify-center gap-4 my-12 py-8 md:py-10">
+    <section className="flex flex-col items-center justify-center gap-4 my-12 pb-6 px-1 md:py-10">
       <div className="w-full h-full">
         <div className="flex flex-col items-center justify-around">
           {/* Total All */}
           <div className="flex flex-row justify-between gap-2">
-            <Card className="min-w-[180px] md:min-w-[230px] p-2">
+            <Card className="min-w-[160px] md:min-w-[230px] p-1">
               <CardBody>
                 <UpGrafikIcon />
-                <p className="text-sm text-green-600">Total Pemasukan</p>
-                <p className="text-md font-semibold">Rp {totalPemasukan}</p>
+                <p className="text-xs text-green-600">Total Pemasukan</p>
+                <p className="text-sm font-semibold">Rp {totalPemasukan}</p>
               </CardBody>
             </Card>
-            <Card className="min-w-[180px] md:min-w-[230px] p-2">
+            <Card className="min-w-[160px] md:min-w-[230px] p-1">
               <CardBody>
                 <DownGrafikIcon />
-                <p className="text-sm text-red-500">Total Pengeluaran</p>
-                <p className="text-md font-semibold">Rp {totalPengeluaran}</p>
+                <p className="text-xs text-red-500">Total Pengeluaran</p>
+                <p className="text-sm font-semibold">Rp {totalPengeluaran}</p>
               </CardBody>
             </Card>
           </div>
           {/* Total Bulanan */}
           <div className="flex flex-row justify-between gap-2 mt-2">
-            <Card className="min-w-[180px] md:min-w-[230px] p-2">
+            <Card className="min-w-[160px] md:min-w-[230px] p-2">
               <CardBody>
                 <UpGrafikIcon />
-                <p className="text-sm text-green-600">Pemasukan Bulan ini</p>
-                <p className="text-md font-semibold">
+                <p className="text-xs text-green-600">Masukan Bulan ini</p>
+                <p className="text-sm font-semibold">
                   Rp {totalPemasukanBulanIni}
                 </p>
               </CardBody>
             </Card>
-            <Card className="min-w-[180px] md:min-w-[230px] p-2">
+            <Card className="min-w-[160px] md:min-w-[230px] p-2">
               <CardBody>
                 <DownGrafikIcon />
-                <p className="text-sm text-red-500">Pengeluaran Bulan ini</p>
-                <p className="text-md font-semibold">
+                <p className="text-xs text-red-500">Keluaran Bulan ini</p>
+                <p className="text-sm font-semibold">
                   Rp {totalPengeluaranBulanIni}
                 </p>
               </CardBody>
             </Card>
           </div>
-          <Card className="mt-6 w-[90%] md:w-[50%] mx-auto">
+          <Card className="mt-6 w-full md:w-[50%] mx-auto">
             <CardBody>
               <div className="flex gap-2 items-center">
                 <CoinIcon />
                 <p className="text-sm ">Cashflow Bersih</p>
               </div>
-              <p className="text-md font-semibold p-3">Rp {saldo}</p>
+              <p className="text-sm font-semibold p-3">Rp {saldo}</p>
             </CardBody>
           </Card>
           <p className="text-md font-semibold p-2 mb-3">Transaksi Terakhir</p>
@@ -107,8 +107,8 @@ export default function HomeDashboard() {
             <TableHeader>
               <TableColumn>Tanggal</TableColumn>
               <TableColumn>Jenis</TableColumn>
-              <TableColumn>Kategori</TableColumn>
               <TableColumn>Jumlah</TableColumn>
+              <TableColumn>Kategori</TableColumn>
             </TableHeader>
             <TableBody emptyContent="Tidak ada data">
               {(data?.dataSpreadseet ?? []).map((i: any) => {
@@ -124,10 +124,10 @@ export default function HomeDashboard() {
                       {i.jenis}
                     </TableCell>
                     <TableCell className="text-xs whitespace-nowrap">
-                      {i.kategori}
+                      {Number(i.jumlah)?.toLocaleString("id")}
                     </TableCell>
                     <TableCell className="text-xs whitespace-nowrap">
-                      {Number(i.jumlah)?.toLocaleString("id")}
+                      {i.kategori}
                     </TableCell>
                   </TableRow>
                 );

@@ -84,12 +84,12 @@ export default function TransaksiDashboard() {
   }
 
   return (
-    <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
+    <section className="flex flex-col items-center justify-center gap-4 pb-16 md:py-10">
       <div className="w-full h-full mt-4">
         <form onSubmit={handleSubmit}>
           <Card className="p-2 w-[90%] md:w-[50%] mx-auto">
             <CardHeader>
-              <h2 className="text-xl font-semibold">Transaksi</h2>
+              <h2 className="text-lg font-semibold">Transaksi</h2>
             </CardHeader>
 
             <CardBody className="flex flex-col gap-3">

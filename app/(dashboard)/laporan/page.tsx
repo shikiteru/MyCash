@@ -120,7 +120,7 @@ export default function LaporanDashboard() {
   if (error) return <p className="p-6 text-red-600">Gagal memuat data.</p>;
 
   return (
-    <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
+    <section className="flex flex-col items-center justify-center gap-4 pb-20 pt-6 md:py-10">
       <div className="w-full h-full">
         <h2 className="text-xl font-bold text-center mb-2">Laporan</h2>
 
@@ -195,7 +195,7 @@ export default function LaporanDashboard() {
           aria-label="Tabel Laporan"
           className="md:w-[70%] mx-auto"
           radius="sm"
-          maxTableHeight={data.length <= 3 ? 250 : 450}
+          maxTableHeight={data.length <= 3 ? 250 : 400}
           isVirtualized={true}
           rowHeight={40}
         >
