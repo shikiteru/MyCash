@@ -4,7 +4,7 @@ import { HomeIcon, LaporanIcon, SettingIcon, TransaksiIcon } from "./icons";
 export default function MobileNavigation() {
   return (
     <div className="fixed bottom-0 left-0 right-0 w-full">
-      <div className="bg-green-500 rounded-t-xl w-full md:w-[50%] mx-auto flex flex-row justify-around items-center gap-4 p-2">
+      <div className="bg-green-500 rounded-t-xl w-full md:w-[35%] mx-auto flex flex-row justify-around items-center gap-4 p-2">
         <Link href="/home" className="text-black flex flex-col items-center">
           <HomeIcon />
           <div className="text-sm font-semibold">Home</div>

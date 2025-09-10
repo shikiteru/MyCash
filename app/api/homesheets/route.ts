@@ -3,10 +3,7 @@ import moment from "moment";
 import { checkUrlSpreadSheet, getSpreadSheetId } from "@/src/libs/checkUrl";
 import { ReadAll } from "@/src/libs/sheets";
 
-export const runtime = "nodejs"; // penting kalau pakai googleapis di route ini
-
 export async function POST(req: NextRequest) {
-  // parse body aman (jika kosong/tidak valid -> {})
   let body: any = {};
   try {
     body = await req.json();
@@ -29,6 +26,8 @@ export async function POST(req: NextRequest) {
     }
 
     const spreadsheetId = getSpreadSheetId(url);
+    console.log(spreadsheetId);
+
     if (!spreadsheetId) {
       return NextResponse.json({ error: "Url tidak valid" }, { status: 400 });
     }

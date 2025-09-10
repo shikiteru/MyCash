@@ -49,7 +49,7 @@ export async function appendRow(row: {
   const id = nanoid();
   await sheets.spreadsheets.values.append({
     spreadsheetId: row.spreadsheetId,
-    range: `Sheet1!A1:G`,
+    range: `Sheet1!A1:H`,
     valueInputOption: "USER_ENTERED",
     requestBody: {
       values: [
@@ -66,4 +66,51 @@ export async function appendRow(row: {
       ],
     },
   });
+}
+
+async function findRowIndexById(spreadsheetId: string, idrow: string) {
+  const sheets = await getClient();
+  const res = await sheets.spreadsheets.values.get({
+    spreadsheetId: spreadsheetId,
+    range: `Sheet1!A1:H`,
+  });
+  const col = res.data.values || [];
+  for (let i = 1; i < col.length; i++) {
+    if ((col[i][0] || "") === idrow) return i + 1;
+  }
+  return null;
+}
+
+export async function deleteRowById(spreadsheetId: string, idrow: string) {
+  const rowIndex = await findRowIndexById(spreadsheetId, idrow);
+  if (!rowIndex) throw new Error("ID tidak ditemukan");
+
+  const sheets = await getClient();
+  await sheets.spreadsheets.batchUpdate({
+    spreadsheetId: spreadsheetId,
+    requestBody: {
+      requests: [
+        {
+          deleteDimension: {
+            range: {
+              sheetId: await getSheetIdByName("Sheet1", spreadsheetId),
+              dimension: "ROWS",
+              startIndex: rowIndex - 1,
+              endIndex: rowIndex,
+            },
+          },
+        },
+      ],
+    },
+  });
+}
+
+async function getSheetIdByName(title: string, spreadsheetId: string) {
+  const sheets = await getClient();
+  const meta = await sheets.spreadsheets.get({ spreadsheetId: spreadsheetId });
+  const sheet = meta.data.sheets?.find((s) => s.properties?.title === title);
+  if (!sheet?.properties?.sheetId && sheet?.properties?.sheetId !== 0) {
+    throw new Error("Sheet tidak ditemukan");
+  }
+  return sheet.properties.sheetId!;
 }

@@ -1,5 +1,5 @@
 import { getSpreadSheetId } from "@/src/libs/checkUrl";
-import { appendRow } from "@/src/libs/sheets";
+import { appendRow, deleteRowById } from "@/src/libs/sheets";
 import { AppendNewDataSchema } from "@/src/utils/validation";
 import { NextResponse } from "next/server";
 
@@ -60,5 +60,24 @@ export async function POST(req: Request) {
       { success: false, message: "Gagal menambah data baru" },
       { status: 500 }
     );
+  }
+}
+
+export async function DELETE(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const sheetsid = searchParams.get("sheetsid");
+  const idrow = searchParams.get("idrow");
+  try {
+    if (!idrow || !sheetsid)
+      return NextResponse.json({ message: "Id Required" }, { status: 400 });
+    await deleteRowById(sheetsid, idrow);
+    return NextResponse.json(
+      { message: "success hapus data" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.log(error);
+
+    return NextResponse.json({ message: "Error Delete Data" }, { status: 400 });
   }
 }

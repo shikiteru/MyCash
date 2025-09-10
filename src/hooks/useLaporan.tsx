@@ -1,50 +1,63 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { getSpreadSheetId } from "../libs/checkUrl";
-type Res = { data?: any } | any;
+
+type Row = any;
 
 export function useLaporan(url?: string, enabled = false) {
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<Row[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<any>(null);
+  const [initialLoad, setInitialLoad] = useState(true);
+  const [error, setError] = useState<unknown>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
 
-  const fetchedOnce = useRef(false);
-  const lastUrlRef = useRef<string | null>(null);
+  const refetch = useCallback(() => setRefreshKey((k) => k + 1), []);
 
   useEffect(() => {
-    if (!enabled || !url) {
-      return;
-    }
+    if (!enabled || !url) return;
 
-    // reset guard kalau URL berubah
-    if (lastUrlRef.current !== url) {
-      fetchedOnce.current = false;
-    }
-
-    if (fetchedOnce.current) return;
-    const run = async () => {
+    const ac = new AbortController();
+    (async () => {
       try {
-        const id = getSpreadSheetId(url);
-        fetchedOnce.current = true;
-        lastUrlRef.current = url;
-        setLoading(true);
+        if (initialLoad) setLoading(true);
         setError(null);
-        const res = await fetch("/api/laporan?id=" + id);
-        const json: Res = await res.json();
-        const rows = Array.isArray(json) ? json : (json.data ?? null);
-        setData(rows);
-      } catch (e: any) {
-        setError(e);
+
+        const spreadsheetId = getSpreadSheetId(url);
+        if (!spreadsheetId) throw new Error("Spreadsheet ID tidak valid");
+
+        const res = await fetch(`/api/laporan?id=${spreadsheetId}`, {
+          signal: ac.signal,
+          cache: "no-store",
+        });
+
+        if (!res.ok) throw new Error(`Gagal memuat data (${res.status})`);
+        const json = await res.json();
+
+        if (ac.signal.aborted) return;
+        const rows: Row[] = Array.isArray(json) ? json : (json.data ?? []);
+        setData(rows ?? []);
+      } catch (e) {
+        if (!(e instanceof DOMException && e.name === "AbortError"))
+          setError(e);
       } finally {
-        setLoading(false);
+        if (!ac.signal.aborted) {
+          setLoading(false);
+          setInitialLoad(false);
+        }
       }
-    };
+    })();
 
-    run();
-  }, [enabled, url]);
+    return () => ac.abort();
+  }, [enabled, url, refreshKey]);
 
-  return {
-    data,
-    loading,
-    error,
-  };
+  return useMemo(
+    () => ({
+      data,
+      loading,
+      error,
+      refetch,
+      setData,
+      initialLoad,
+    }),
+    [data, loading, error, refetch, initialLoad]
+  );
 }

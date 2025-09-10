@@ -21,6 +21,7 @@ import {
   DateValue,
   getLocalTimeZone,
 } from "@internationalized/date";
+import { getSpreadSheetId } from "@/src/libs/checkUrl";
 
 function ddmmyyyyToTime(t: string): number {
   const [dd, mm, yyyy] = t.split("-").map(Number);
@@ -40,17 +41,45 @@ type Opt = { key: string; label: string };
 export default function LaporanDashboard() {
   const { url, haveUrl, hydrated } = useStorage();
   const enabled = hydrated && haveUrl && Boolean(url);
-  const { data, loading, error } = useLaporan(url, enabled);
+  const { data, loading, error, refetch, setData, initialLoad } = useLaporan(
+    url,
+    enabled
+  );
   const router = useRouter();
-
   const [jenis, setJenis] = useState<"" | "Pemasukan" | "Pengeluaran">("");
   const [urut, setUrut] = useState<"" | "Terbaru" | "Terlama">("Terbaru");
   const [kategori, setKategori] = useState<string>("");
   const [tanggal, setTanggal] = useState<CalendarDate | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
+  async function handleDelete(row: any) {
+    if (!row?.id) return;
+    const prev = data;
+    setDeletingId(row.id);
+    setData(prev.filter((x: any) => x.id !== row.id));
+
+    try {
+      const spreadsheetId = getSpreadSheetId(url!);
+      const qs = new URLSearchParams({
+        sheetsid: spreadsheetId,
+        idrow: String(row.id),
+      }).toString();
+      const res = await fetch(`/api/actionsheet?${qs}`, { method: "DELETE" });
+      if (!res.ok) {
+        setData(prev);
+      }
+      refetch();
+    } catch (err) {
+      setData(prev);
+      refetch();
+    } finally {
+      setDeletingId(null);
+    }
+  }
   useEffect(() => {
     if (!haveUrl) router.push("/");
   }, [haveUrl, router]);
+
   const defaultKategori = [
     "Gaji",
     "Makanan",
@@ -110,7 +139,7 @@ export default function LaporanDashboard() {
     return rows;
   }, [data, jenis, kategori, tanggal, urut]);
 
-  if (loading || !data) {
+  if (initialLoad || !data) {
     return (
       <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
         <HomeLoading />
@@ -193,7 +222,7 @@ export default function LaporanDashboard() {
 
         <Table
           aria-label="Tabel Laporan"
-          className="md:w-[70%] mx-auto"
+          className="md:w-[50%] mx-auto"
           radius="sm"
           maxTableHeight={data.length <= 3 ? 250 : 400}
           isVirtualized={true}
@@ -234,7 +263,13 @@ export default function LaporanDashboard() {
                   {item.catatan}
                 </TableCell>
                 <TableCell className="whitespace-nowrap">
-                  <Button color="danger" size="sm">
+                  <Button
+                    color="danger"
+                    size="sm"
+                    onPress={() => handleDelete(item)}
+                    isLoading={deletingId === item.id}
+                    isDisabled={deletingId === item.id}
+                  >
                     Hapus
                   </Button>
                 </TableCell>
