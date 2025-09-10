@@ -29,10 +29,10 @@ export async function POST(req: NextRequest) {
     if (!spreadsheetId) {
       return NextResponse.json({ error: "Url tidak valid" }, { status: 400 });
     }
-    const sheets = await getSecretSheet(spreadsheetId);
-    if (!sheets) {
-      return NextResponse.redirect(new URL("/", req.url));
-    }
+    // const sheets = await getSecretSheet(spreadsheetId);
+    // if (!sheets) {
+    //   return NextResponse.redirect(new URL("/", req.url));
+    // }
     const data = await ReadAll(spreadsheetId);
 
     const dataSpreadseet = [...data].reverse().slice(0, 5);
