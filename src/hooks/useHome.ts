@@ -1,22 +1,23 @@
 "use client";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-
+import { useStorage } from "../context/StorageProvider";
 type Res = { data?: any } | any;
 
 export function useHomeData(url?: string, enabled = false) {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<any>(null);
-
+  const router = useRouter();
   const fetchedOnce = useRef(false);
   const lastUrlRef = useRef<string | null>(null);
+  const { setHaveUrl, setUrlSheet } = useStorage();
 
   useEffect(() => {
     if (!enabled || !url) {
       return;
     }
 
-    // reset guard kalau URL berubah
     if (lastUrlRef.current !== url) {
       fetchedOnce.current = false;
     }
@@ -41,6 +42,10 @@ export function useHomeData(url?: string, enabled = false) {
         setData(rows);
       } catch (e: any) {
         setError(e);
+        localStorage.clear();
+        setHaveUrl(false);
+        setUrlSheet("");
+        router.replace("/");
       } finally {
         setLoading(false);
       }

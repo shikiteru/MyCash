@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
     }
     const sheets = await getSecretSheet(spreadsheetId);
     if (!sheets) {
-      return NextResponse.redirect("/", 301);
+      return NextResponse.redirect(new URL("/", req.url));
     }
     const data = await ReadAll(spreadsheetId);
 
