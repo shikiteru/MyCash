@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import moment from "moment";
 import { checkUrlSpreadSheet, getSpreadSheetId } from "@/src/libs/checkUrl";
-import { ReadAll } from "@/src/libs/sheets";
+import { getSecretSheet, ReadAll } from "@/src/libs/sheets";
 
 export async function POST(req: NextRequest) {
   let body: any = {};
@@ -26,12 +26,13 @@ export async function POST(req: NextRequest) {
     }
 
     const spreadsheetId = getSpreadSheetId(url);
-    console.log(spreadsheetId);
-
     if (!spreadsheetId) {
       return NextResponse.json({ error: "Url tidak valid" }, { status: 400 });
     }
-
+    const sheets = await getSecretSheet(spreadsheetId);
+    if (!sheets) {
+      return NextResponse.redirect("/", 301);
+    }
     const data = await ReadAll(spreadsheetId);
 
     const dataSpreadseet = [...data].reverse().slice(0, 5);

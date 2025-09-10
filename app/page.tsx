@@ -37,13 +37,12 @@ export default function Home() {
       return;
     }
     setError(null);
-    AddUrl(url); // simpan ke localStorage
-    setUrlSheet(url); // update context
-    setHaveUrl(true); // update context
-    router.push("/home"); // menuju dashboard
+    AddUrl(url);
+    setUrlSheet(url);
+    setHaveUrl(true);
+    router.push("/home");
   }, [url, setHaveUrl, router]);
 
-  // Loading global (cek haveUrl)
   if (loading) {
     return (
       <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">

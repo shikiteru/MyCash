@@ -114,3 +114,11 @@ async function getSheetIdByName(title: string, spreadsheetId: string) {
   }
   return sheet.properties.sheetId!;
 }
+
+export async function getSecretSheet(spreadsheetId: string) {
+  const sheets = await getClient();
+  const meta = await sheets.spreadsheets.get({ spreadsheetId: spreadsheetId });
+  const sheet = meta.data?.properties?.title === process.env.SECRET_SHEETS;
+  if (!sheet) return false;
+  return true;
+}
