@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.vercel.my_cash_omega.twa",
+      "sha256_cert_fingerprints": [
+        "96:06:1D:F5:59:16:F1:8C:F6:DC:13:66:27:06:EC:6C:A2:33:22:DD:A2:A8:B5:91:E1:92:EF:1B:73:E7:D0:A5"
+      ]
+    }
+  }
+]
