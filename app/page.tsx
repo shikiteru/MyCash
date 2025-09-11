@@ -17,7 +17,7 @@ export default function Home() {
   const [url, setUrl] = useState("");
 
   const router = useRouter();
-  const { haveUrl, setHaveUrl, setUrlSheet } = useStorage();
+  const { haveUrl, setHaveUrl, setUrlSheet, key, setKey } = useStorage();
 
   useEffect(() => {
     (async () => {
@@ -30,18 +30,46 @@ export default function Home() {
     })();
   }, [haveUrl]);
 
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = useCallback(async () => {
     const ok = checkUrlSpreadSheet(url);
     if (!ok) {
       setError("URL Spreadsheet tidak valid");
       return;
     }
-    setError(null);
-    AddUrl(url);
-    setUrlSheet(url);
-    setHaveUrl(true);
-    router.push("/home");
-  }, [url, setHaveUrl, router]);
+    if (!key) {
+      setError("Key Access tidak valid");
+      return;
+    }
+    try {
+      const res = await fetch(`/api/verify`, {
+        method: "PATCH",
+        body: JSON.stringify({
+          key: key,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await res.json();
+      console.log(data.success);
+
+      if (!data.success) {
+        setError(data.message);
+        return;
+      }
+      if (data.success) {
+        setError(null);
+        AddUrl("url", url);
+        AddUrl("key", key);
+        setUrlSheet(url);
+        setHaveUrl(true);
+        setKey(key);
+        router.push("/home");
+      }
+    } catch (error) {
+      setError("Network Error Please Try Again");
+    }
+  }, [url, setHaveUrl, router, key]);
 
   if (loading) {
     return (
@@ -51,7 +79,6 @@ export default function Home() {
     );
   }
 
-  // Jika sudah punya URL, tampilkan loading singkat saat redirect
   if (haveUrl) {
     return (
       <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
@@ -60,7 +87,6 @@ export default function Home() {
     );
   }
 
-  // Form connect spreadsheet
   return (
     <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
       <div className="w-[90%] md:w-[50%] mx-auto text-center">
@@ -72,14 +98,12 @@ export default function Home() {
 
         <div className="mt-16">
           <Card className="w-full md:w-[60%] mx-auto shadow-lg rounded-2xl">
-            <CardBody className="p-4">
+            <CardBody className="p-4 flext flex-col gap-4">
               <div className="w-full flex flex-col gap-4">
-                <label htmlFor="url" className="text-xs font-medium">
-                  Masukkan URL SpreadSheet Kamu
-                </label>
                 <Input
                   id="url"
                   type="text"
+                  label="Masukkan URL SpreadSheet Kamu"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
@@ -87,13 +111,25 @@ export default function Home() {
                   size="lg"
                 />
               </div>
-              <div className="flex w-full justify-center mt-5">
+              <div className="w-full flex flex-col gap-4">
+                <Input
+                  id="key"
+                  type="text"
+                  label="Masukkan Key Access Kamu"
+                  value={key}
+                  onChange={(e) => setKey(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+                  placeholder="ACCESS808"
+                  size="lg"
+                />
+              </div>
+              <div className="flex w-full justify-center mt-2">
                 <Button
                   variant="shadow"
                   color="success"
                   onPress={handleSubmit}
                   className="w-[70%] font-semibold"
-                  isDisabled={!url}
+                  isDisabled={!url || !key}
                 >
                   Access Dashboard
                 </Button>

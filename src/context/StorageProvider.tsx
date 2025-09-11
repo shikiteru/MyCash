@@ -8,7 +8,9 @@ type Ctx = {
   setUrlSheet: (v: string) => void;
   haveUrl: boolean;
   setHaveUrl: (v: boolean) => void;
-  hydrated: boolean; // ← tambahkan
+  hydrated: boolean;
+  key: string;
+  setKey: (v: string) => void;
 };
 
 const StorageContext = createContext<Ctx | undefined>(undefined);
@@ -16,20 +18,25 @@ const StorageContext = createContext<Ctx | undefined>(undefined);
 export function StorageProvider({ children }: { children: React.ReactNode }) {
   const [url, setUrlSheet] = useState("");
   const [haveUrl, setHaveUrl] = useState(false);
-  const [hydrated, setHydrated] = useState(false); // ← tambahkan
+  const [hydrated, setHydrated] = useState(false);
+  const [key, setKey] = useState("");
 
   useEffect(() => {
-    const u = getUrl(); // baca dari localStorage
+    const u = getUrl("url");
+    const k = getUrl("key");
     if (u) {
       setUrlSheet(u);
       setHaveUrl(true);
     }
-    setHydrated(true); // ← tandai sudah siap
+    if (k) {
+      setKey(k);
+    }
+    setHydrated(true); //
   }, []);
 
   return (
     <StorageContext.Provider
-      value={{ url, setUrlSheet, haveUrl, setHaveUrl, hydrated }}
+      value={{ url, setUrlSheet, haveUrl, setHaveUrl, hydrated, key, setKey }}
     >
       {children}
     </StorageContext.Provider>

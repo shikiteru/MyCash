@@ -1,13 +1,13 @@
-export function AddUrl(url: string) {
-  localStorage.setItem("url", url);
+export function AddUrl(key: string, url: string) {
+  localStorage.setItem(key, url);
 }
 
-export function getUrl() {
-  return localStorage.getItem("url");
+export function getUrl(key: string) {
+  return localStorage.getItem(key);
 }
 
-export function removeUrl() {
-  localStorage.removeItem("url");
+export function removeUrl(key: string) {
+  localStorage.removeItem(key);
 }
 
 export function AddCustomData(key: string, data: string[]) {

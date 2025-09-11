@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import moment from "moment";
 import { checkUrlSpreadSheet, getSpreadSheetId } from "@/src/libs/checkUrl";
-import { getSecretSheet, ReadAll } from "@/src/libs/sheets";
+import { ReadAll } from "@/src/libs/sheets";
 
 export async function POST(req: NextRequest) {
   let body: any = {};
@@ -29,26 +29,17 @@ export async function POST(req: NextRequest) {
     if (!spreadsheetId) {
       return NextResponse.json({ error: "Url tidak valid" }, { status: 400 });
     }
-    // const sheets = await getSecretSheet(spreadsheetId);
-    // if (!sheets) {
-    //   return NextResponse.redirect(new URL("/", req.url));
-    // }
     const data = await ReadAll(spreadsheetId);
-
     const dataSpreadseet = [...data].reverse().slice(0, 5);
     const toNum = (v: any) =>
       Number(String(v ?? 0).replace(/[^\d.-]/g, "")) || 0;
-
     const totalPemasukan = data
       .filter((i: any) => i.jenis === "Pemasukan")
       .reduce((acc: number, i: any) => acc + toNum(i.jumlah), 0);
-
     const totalPengeluaran = data
       .filter((i: any) => i.jenis === "Pengeluaran")
       .reduce((acc: number, i: any) => acc + toNum(i.jumlah), 0);
-
     const saldo = totalPemasukan - totalPengeluaran;
-
     const now = moment();
     const dataBulanIni = data.filter((i: any) => {
       const m = moment(String(i.tanggal), "DD-MM-YYYY", true);

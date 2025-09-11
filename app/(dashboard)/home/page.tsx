@@ -18,11 +18,23 @@ import { useHomeData } from "@/src/hooks/useHome";
 
 export default function HomeDashboard() {
   const router = useRouter();
-  const { url, haveUrl, hydrated } = useStorage();
+  const { url, haveUrl, hydrated, key } = useStorage();
   const enabled = hydrated && haveUrl && Boolean(url);
   const { data, loading, error } = useHomeData(url, enabled);
 
+  async function updateUsed() {
+    if (!key) return;
+    const res = await fetch(`/api/verify?key=${key}`, {
+      method: "GET",
+    });
+    const data = await res.json();
+    if (!data.success) {
+      router.replace("/");
+    }
+  }
+
   useEffect(() => {
+    updateUsed();
     if (!haveUrl) router.replace("/");
   }, [haveUrl, router]);
 
