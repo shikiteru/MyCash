@@ -17,7 +17,7 @@ export default function ContactDev() {
             <FaWhatsapp size={42} color="#17c964" />
           </a>
           <a
-            href="https://t.me/@shikiteru_dev"
+            href="https://t.me/shikiteru_dev"
             className="flex items-center gap-2"
             target="_blank"
           >
