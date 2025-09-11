@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { Accordion, AccordionItem } from "@heroui/accordion";
 import { useSetting } from "@/src/hooks/useSetting";
 import { clearCustomData } from "@/src/libs/localstorage";
+import ContactDev from "@/components/contact";
 
 export default function SettingDashboard() {
   const { haveUrl, setHaveUrl } = useStorage();
@@ -193,6 +194,9 @@ export default function SettingDashboard() {
             )}
           </AccordionItem>
         </Accordion>
+        <div className="mt-4 flex flex-col gap-4">
+          <ContactDev />
+        </div>
       </div>
     </section>
   );

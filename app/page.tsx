@@ -10,6 +10,7 @@ import { Alert } from "@heroui/alert";
 import { AddUrl } from "@/src/libs/localstorage";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
+import ContactDev from "@/components/contact";
 
 export type metadataType = {
   user_agent: string;
@@ -189,6 +190,10 @@ export default function Home() {
               </p>
             </CardBody>
           </Card>
+        </div>
+
+        <div className="mt-2 flex flex-col gap-4">
+          <ContactDev />
         </div>
       </div>
     </section>
