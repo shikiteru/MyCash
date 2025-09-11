@@ -103,12 +103,12 @@ export default function Home() {
                 <Input
                   id="url"
                   type="text"
-                  label="Masukkan URL SpreadSheet Kamu"
+                  label="Masukkan URL SpreadSheet"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
                   placeholder="https://docs.google.com/spreadsheets/d/1Ielw3pi..."
-                  size="lg"
+                  size="md"
                 />
               </div>
               <div className="w-full flex flex-col gap-4">
@@ -120,7 +120,7 @@ export default function Home() {
                   onChange={(e) => setKey(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
                   placeholder="ACCESS808"
-                  size="lg"
+                  size="md"
                 />
               </div>
               <div className="flex w-full justify-center mt-2">
