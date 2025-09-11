@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 export async function PATCH(req: NextRequest) {
   const body = await req.json();
   const key = body.key;
+  const metadata = body.metadata;
+
   if (!key) {
     return NextResponse.json(
       { error: "Key Access tidak valid" },
@@ -12,7 +14,8 @@ export async function PATCH(req: NextRequest) {
   const res = await fetch(`${process.env.URL_API}/key/update`, {
     method: "PATCH",
     body: JSON.stringify({
-      key: key,
+      key,
+      metadata,
     }),
     headers: {
       "Content-Type": "application/json",

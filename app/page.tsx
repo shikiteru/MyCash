@@ -11,15 +11,34 @@ import { AddUrl } from "@/src/libs/localstorage";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 
+export type metadataType = {
+  user_agent: string;
+  device: string;
+  os: string;
+  browser: string;
+};
+
 export default function Home() {
   const [loading, setLoading] = useState(true); // ← AKTIFKAN LAGI
   const [error, setError] = useState<string | null>(null); // ← AKTIFKAN LAGI
   const [url, setUrl] = useState("");
+  const [metadata, setMetadata] = useState<metadataType>({
+    user_agent: "",
+    device: "",
+    os: "",
+    browser: "",
+  });
 
   const router = useRouter();
   const { haveUrl, setHaveUrl, setUrlSheet, key, setKey } = useStorage();
 
   useEffect(() => {
+    setMetadata({
+      user_agent: navigator.userAgent,
+      device: /Mobi|Android/i.test(navigator.userAgent) ? "Mobile" : "Desktop",
+      os: navigator.platform,
+      browser: navigator.userAgent.includes("Chrome") ? "Chrome" : "Other",
+    });
     (async () => {
       try {
         if (!haveUrl) router.replace("/");
@@ -44,15 +63,14 @@ export default function Home() {
       const res = await fetch(`/api/verify`, {
         method: "PATCH",
         body: JSON.stringify({
-          key: key,
+          key,
+          metadata,
         }),
         headers: {
           "Content-Type": "application/json",
         },
       });
       const data = await res.json();
-      console.log(data.success);
-
       if (!data.success) {
         setError(data.message);
         return;
