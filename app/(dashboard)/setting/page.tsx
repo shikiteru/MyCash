@@ -194,7 +194,7 @@ export default function SettingDashboard() {
             )}
           </AccordionItem>
         </Accordion>
-        <div className="mt-4 flex flex-col gap-4">
+        <div className="my-4 flex flex-col gap-4">
           <ContactDev />
         </div>
       </div>
