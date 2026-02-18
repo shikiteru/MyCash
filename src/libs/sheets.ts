@@ -21,8 +21,10 @@ export async function ReadAll(spreadsheetId: string) {
     range: `Sheet1!A1:H`,
   });
   const rows = res.data.values || [];
+
   if (rows.length <= 1) return [];
   const header = rows[0];
+
   return rows.slice(1).map((r) => ({
     id: r[0],
     tanggal: r[1],
@@ -47,6 +49,7 @@ export async function appendRow(row: {
 }) {
   const sheets = await getClient();
   const id = nanoid();
+
   await sheets.spreadsheets.values.append({
     spreadsheetId: row.spreadsheetId,
     range: `Sheet1!A1:H`,
@@ -75,17 +78,21 @@ async function findRowIndexById(spreadsheetId: string, idrow: string) {
     range: `Sheet1!A1:H`,
   });
   const col = res.data.values || [];
+
   for (let i = 1; i < col.length; i++) {
     if ((col[i][0] || "") === idrow) return i + 1;
   }
+
   return null;
 }
 
 export async function deleteRowById(spreadsheetId: string, idrow: string) {
   const rowIndex = await findRowIndexById(spreadsheetId, idrow);
+
   if (!rowIndex) throw new Error("ID tidak ditemukan");
 
   const sheets = await getClient();
+
   await sheets.spreadsheets.batchUpdate({
     spreadsheetId: spreadsheetId,
     requestBody: {
@@ -109,9 +116,11 @@ async function getSheetIdByName(title: string, spreadsheetId: string) {
   const sheets = await getClient();
   const meta = await sheets.spreadsheets.get({ spreadsheetId: spreadsheetId });
   const sheet = meta.data.sheets?.find((s) => s.properties?.title === title);
+
   if (!sheet?.properties?.sheetId && sheet?.properties?.sheetId !== 0) {
     throw new Error("Sheet tidak ditemukan");
   }
+
   return sheet.properties.sheetId!;
 }
 
@@ -119,6 +128,8 @@ export async function getSecretSheet(spreadsheetId: string) {
   const sheets = await getClient();
   const meta = await sheets.spreadsheets.get({ spreadsheetId: spreadsheetId });
   const sheet = meta.data?.properties?.title === process.env.SECRET_SHEETS;
+
   if (!sheet) return false;
+
   return true;
 }

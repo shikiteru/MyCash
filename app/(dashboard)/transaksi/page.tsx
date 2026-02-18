@@ -1,7 +1,5 @@
 "use client";
 
-import HomeLoading from "@/components/HomeLoading";
-import { useStorage } from "@/src/context/StorageProvider";
 import { Card, CardBody, CardFooter, CardHeader } from "@heroui/card";
 import { Input } from "@heroui/input";
 import { DatePicker } from "@heroui/date-picker";
@@ -12,6 +10,9 @@ import { useEffect, useMemo, useState } from "react";
 import { getLocalTimeZone, today } from "@internationalized/date";
 import { Spinner } from "@heroui/spinner";
 import { Alert } from "@heroui/alert";
+
+import { useStorage } from "@/src/context/StorageProvider";
+import HomeLoading from "@/components/HomeLoading";
 import { useTransaksi } from "@/src/hooks/useTransaksi";
 import { getCustomData } from "@/src/libs/localstorage";
 
@@ -28,7 +29,7 @@ const DEFAULT_METODE = ["Cash", "Transfer Bank", "E-wallet"];
 
 function uniqSorted(arr: string[]) {
   return Array.from(new Set(arr.map((s) => s.trim()).filter(Boolean))).sort(
-    (a, b) => a.localeCompare(b)
+    (a, b) => a.localeCompare(b),
   );
 }
 
@@ -54,6 +55,7 @@ export default function TransaksiDashboard() {
   useEffect(() => {
     if (!haveUrl) router.replace("/");
     const t = setTimeout(() => setLoading(false), 1500);
+
     return () => clearTimeout(t);
   }, [haveUrl, router]);
 
@@ -61,6 +63,7 @@ export default function TransaksiDashboard() {
     try {
       const customKategori = getCustomData("kategori") ?? [];
       const customMetode = getCustomData("metode") ?? [];
+
       setKategoriOptions(uniqSorted([...DEFAULT_KATEGORI, ...customKategori]));
       setMetodeOptions(uniqSorted([...DEFAULT_METODE, ...customMetode]));
     } catch {}
@@ -68,11 +71,11 @@ export default function TransaksiDashboard() {
 
   const kategoriItems: Opt[] = useMemo(
     () => kategoriOptions.map((k) => ({ key: k, label: k })),
-    [kategoriOptions]
+    [kategoriOptions],
   );
   const metodeItems: Opt[] = useMemo(
     () => metodeOptions.map((m) => ({ key: m, label: m })),
-    [metodeOptions]
+    [metodeOptions],
   );
 
   if (loading) {
@@ -94,30 +97,30 @@ export default function TransaksiDashboard() {
 
             <CardBody className="flex flex-col gap-3">
               <DatePicker
-                label="Tanggal"
+                defaultValue={today(getLocalTimeZone())}
                 granularity="day"
+                label="Tanggal"
                 value={formValue.tanggal}
                 onChange={handleTanggalChange}
-                defaultValue={today(getLocalTimeZone())}
               />
 
               <Input
+                label="Deskripsi"
                 name="deskripsi"
+                placeholder="Masukkan Deskripsi"
                 value={formValue.deskripsi}
                 onChange={handleChange}
-                label="Deskripsi"
-                placeholder="Masukkan Deskripsi"
               />
 
               <Select
+                isDisabled={kategoriItems.length === 0}
+                items={kategoriItems}
                 label="Kategori"
                 placeholder="Pilih Kategori"
-                items={kategoriItems}
                 selectedKeys={
                   formValue.kategori ? new Set([formValue.kategori]) : new Set()
                 }
                 onSelectionChange={handleSelect("kategori")}
-                isDisabled={kategoriItems.length === 0}
               >
                 {(item: Opt) => (
                   <SelectItem key={item.key}>{item.label}</SelectItem>
@@ -137,28 +140,28 @@ export default function TransaksiDashboard() {
               </Select>
 
               <Input
-                name="jumlah"
-                type="number"
-                value={formValue.jumlah}
-                onChange={handleChange}
                 label="Jumlah"
+                name="jumlah"
                 placeholder="0"
                 startContent={
                   <div className="pointer-events-none flex items-center">
                     <span className="text-default-400 text-small">Rp</span>
                   </div>
                 }
+                type="number"
+                value={formValue.jumlah}
+                onChange={handleChange}
               />
 
               <Select
+                isDisabled={metodeItems.length === 0}
+                items={metodeItems}
                 label="Metode Pembayaran"
                 placeholder="Pilih Metode Pembayaran"
-                items={metodeItems}
                 selectedKeys={
                   formValue.metode ? new Set([formValue.metode]) : new Set()
                 }
                 onSelectionChange={handleSelect("metode")}
-                isDisabled={metodeItems.length === 0}
               >
                 {(item: Opt) => (
                   <SelectItem key={item.key}>{item.label}</SelectItem>
@@ -166,28 +169,28 @@ export default function TransaksiDashboard() {
               </Select>
 
               <Input
+                label="Catatan"
                 name="catatan"
+                placeholder="Masukkan Catatan"
                 value={formValue.catatan}
                 onChange={handleChange}
-                label="Catatan"
-                placeholder="Masukkan Catatan"
               />
             </CardBody>
 
             <CardFooter className="flex flex-col justify-between gap-2">
               <Button
-                type="submit"
-                variant="solid"
+                className="w-full font-semibold"
                 color="success"
                 disabled={pending}
-                className="w-full font-semibold"
+                type="submit"
+                variant="solid"
               >
                 {pending ? (
                   <Spinner
+                    className="mb-2"
+                    color="white"
                     size="lg"
                     variant="dots"
-                    color="white"
-                    className="mb-2"
                   />
                 ) : (
                   "Simpan"
@@ -196,8 +199,8 @@ export default function TransaksiDashboard() {
               {showAlert && (
                 <Alert
                   color={isSuccess ? "success" : "danger"}
-                  title={isSuccess ? "Berhasil" : "Gagal"}
                   description={message}
+                  title={isSuccess ? "Berhasil" : "Gagal"}
                   variant="flat"
                 />
               )}

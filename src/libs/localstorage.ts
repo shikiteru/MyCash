@@ -25,7 +25,7 @@ export function removeCustomData(key: string, values: string | string[]) {
   const removeSet = new Set(arr.map((v) => v.trim().toLowerCase()));
 
   const newData = customData.filter(
-    (i: string) => !removeSet.has(i.trim().toLowerCase())
+    (i: string) => !removeSet.has(i.trim().toLowerCase()),
   );
 
   AddCustomData(key, newData);

@@ -12,6 +12,7 @@ export const AppendNewDataSchema = z.object({
         d.getFullYear() === yyyy &&
         d.getMonth() === (mm ?? 1) - 1 &&
         d.getDate() === dd;
+
       if (!valid) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,

@@ -1,6 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+
 import { useStorage } from "../context/StorageProvider";
 type Res = { data?: any } | any;
 
@@ -39,6 +40,7 @@ export function useHomeData(url?: string, enabled = false) {
 
         const json: Res = await res.json();
         const rows = Array.isArray(json) ? json : (json.data ?? null);
+
         setData(rows);
       } catch (e: any) {
         setError(e);

@@ -1,11 +1,7 @@
 "use client";
-import HomeLoading from "@/components/HomeLoading";
-import { useStorage } from "@/src/context/StorageProvider";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import MobileNavigation from "@/components/mobilenavigation";
 import { Card, CardBody } from "@heroui/card";
-import { CoinIcon, DownGrafikIcon, UpGrafikIcon } from "@/components/icons";
 import {
   Table,
   TableHeader,
@@ -14,6 +10,10 @@ import {
   TableRow,
   TableCell,
 } from "@heroui/table";
+
+import HomeLoading from "@/components/HomeLoading";
+import { useStorage } from "@/src/context/StorageProvider";
+import { CoinIcon, DownGrafikIcon, UpGrafikIcon } from "@/components/icons";
 import { useHomeData } from "@/src/hooks/useHome";
 
 export default function HomeDashboard() {
@@ -28,6 +28,7 @@ export default function HomeDashboard() {
       method: "GET",
     });
     const data = await res.json();
+
     if (!data.success) {
       router.replace("/");
     }
@@ -125,6 +126,7 @@ export default function HomeDashboard() {
             <TableBody emptyContent="Tidak ada data">
               {(data?.dataSpreadseet ?? []).map((i: any) => {
                 const isPemasukan = i.jenis === "Pemasukan";
+
                 return (
                   <TableRow key={i.id}>
                     <TableCell className="text-xs whitespace-nowrap">

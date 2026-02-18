@@ -1,4 +1,3 @@
-import { Card, CardBody } from "@heroui/card";
 import { FaWhatsapp, FaTelegram } from "react-icons/fa6";
 
 export default function ContactDev() {
@@ -10,18 +9,20 @@ export default function ContactDev() {
         </p>
         <div className="flex flex-row gap-6 justify-center">
           <a
-            href="https://wa.me/6283865656540?text=Halo%20Developer%20MyCash%20Saya butuh bantuan"
-            target="_blank"
             className="flex items-center gap-2"
+            href="https://wa.me/6283865656540?text=Halo%20Developer%20MyCash%20Saya butuh bantuan"
+            rel="noreferrer"
+            target="_blank"
           >
-            <FaWhatsapp size={42} color="#17c964" />
+            <FaWhatsapp color="#17c964" size={42} />
           </a>
           <a
-            href="https://t.me/shikiteru_dev"
             className="flex items-center gap-2"
+            href="https://t.me/shikiteru_dev"
+            rel="noreferrer"
             target="_blank"
           >
-            <FaTelegram size={42} color="#0ea5e9" />
+            <FaTelegram color="#0ea5e9" size={42} />
           </a>
         </div>
       </div>

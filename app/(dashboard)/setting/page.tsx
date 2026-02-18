@@ -1,14 +1,15 @@
 "use client";
 
-import HomeLoading from "@/components/HomeLoading";
-import { DeleteIcon, ListIcon } from "@/components/icons";
-import { useStorage } from "@/src/context/StorageProvider";
 import { Button } from "@heroui/button";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Input } from "@heroui/input";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Accordion, AccordionItem } from "@heroui/accordion";
+
+import { useStorage } from "@/src/context/StorageProvider";
+import { DeleteIcon, ListIcon } from "@/components/icons";
+import HomeLoading from "@/components/HomeLoading";
 import { useSetting } from "@/src/hooks/useSetting";
 import { clearCustomData } from "@/src/libs/localstorage";
 import ContactDev from "@/components/contact";
@@ -52,6 +53,7 @@ export default function SettingDashboard() {
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 1500);
+
     return () => clearTimeout(timeout);
   }, [haveUrl, router]);
 
@@ -75,18 +77,18 @@ export default function SettingDashboard() {
               <Input
                 className="max-w-full"
                 label="Tambah Kategori baru"
-                size="md"
                 placeholder="Masukkan Kategori baru"
+                size="md"
                 value={kategori}
                 onChange={handleKategori}
               />
               <Button
-                variant="shadow"
-                color="success"
                 className="font-semibold"
-                onPress={SaveKategori}
-                isLoading={loadingKategori}
+                color="success"
                 isDisabled={!canSaveKategori}
+                isLoading={loadingKategori}
+                variant="shadow"
+                onPress={SaveKategori}
               >
                 Tambah
               </Button>
@@ -96,18 +98,18 @@ export default function SettingDashboard() {
               <Input
                 className="max-w-full"
                 label="Tambah pembayaran baru"
-                size="md"
                 placeholder="Masukkan Metode baru"
+                size="md"
                 value={metode}
                 onChange={handleMetode}
               />
               <Button
-                variant="solid"
-                color="success"
                 className="font-semibold"
-                onPress={SaveMetode}
-                isLoading={loadingMetode}
+                color="success"
                 isDisabled={!canSaveMetode}
+                isLoading={loadingMetode}
+                variant="solid"
+                onPress={SaveMetode}
               >
                 Tambah
               </Button>
@@ -115,13 +117,13 @@ export default function SettingDashboard() {
 
             <div className="flex flex-row gap-2 items-center">
               <Button
+                className="w-full font-semibold"
+                color="danger"
                 endContent={<DeleteIcon />}
+                isLoading={loadingReset}
                 type="submit"
                 variant="solid"
-                color="danger"
-                className="w-full font-semibold"
                 onPress={() => ResetUrl(doResetUrl)}
-                isLoading={loadingReset}
               >
                 Reset Url Spreadsheet
               </Button>
@@ -129,12 +131,12 @@ export default function SettingDashboard() {
           </CardBody>
         </Card>
 
-        <Accordion variant="shadow" className="w-[90%] md:w-[50%] mx-auto mt-4">
+        <Accordion className="w-[90%] md:w-[50%] mx-auto mt-4" variant="shadow">
           <AccordionItem
             key="1"
             aria-label="List Kategori Baru"
-            title="List Kategori Baru"
             startContent={<ListIcon />}
+            title="List Kategori Baru"
           >
             {kategoriList.length === 0 ? (
               <p className="text-sm text-default-500">
@@ -149,8 +151,8 @@ export default function SettingDashboard() {
                   >
                     <span>{k}</span>
                     <Button
-                      size="sm"
                       color="danger"
+                      size="sm"
                       variant="flat"
                       onPress={() => RemoveKategori(k)}
                     >
@@ -165,8 +167,8 @@ export default function SettingDashboard() {
           <AccordionItem
             key="2"
             aria-label="List Metode Pembayaran"
-            title="List Metode Pembayaran"
             startContent={<ListIcon />}
+            title="List Metode Pembayaran"
           >
             {metodeList.length === 0 ? (
               <p className="text-sm text-default-500">
@@ -181,8 +183,8 @@ export default function SettingDashboard() {
                   >
                     <span>{m}</span>
                     <Button
-                      size="sm"
                       color="danger"
+                      size="sm"
                       variant="flat"
                       onPress={() => RemoveMetode(m)}
                     >

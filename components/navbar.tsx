@@ -5,9 +5,10 @@ import {
   NavbarItem,
 } from "@heroui/navbar";
 import NextLink from "next/link";
+import Image from "next/image";
+
 import { ThemeSwitch } from "@/components/theme-switch";
 import Logo from "@/public/logo.png";
-import Image from "next/image";
 
 export const Navbar = () => {
   return (
@@ -15,7 +16,7 @@ export const Navbar = () => {
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-2" href="/">
-            <Image src={Logo} priority alt="logo" width={40} height={40} />
+            <Image priority alt="logo" height={40} src={Logo} width={40} />
             <p className="font-bold text-green-400">MyCash </p>
           </NextLink>
         </NavbarBrand>

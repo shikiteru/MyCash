@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+
 import {
   AddCustomData,
   getCustomData,
@@ -9,6 +10,7 @@ type SaveKey = "kategori" | "metode";
 
 function readList(key: SaveKey): string[] {
   const raw = getCustomData(key);
+
   // pastikan array of string
   return Array.isArray(raw) ? raw.map(String) : [];
 }
@@ -30,6 +32,7 @@ export function useSetting() {
     setKategori(e.target.value);
   const handleMetode = (e: React.ChangeEvent<HTMLInputElement>) =>
     setMetode(e.target.value);
+
   function capitalizeWords(str: string) {
     return str
       .trim()
@@ -42,15 +45,18 @@ export function useSetting() {
 
   async function SaveKategori() {
     const val = normalize(kategori);
+
     if (!val) return;
 
     setLoadingKategori(true);
     try {
       const current = readList("kategori");
+
       if (!existsInsensitive(current, val)) {
         const next = [...current, capitalizeWords(val)].sort((a, b) =>
-          a.localeCompare(b)
+          a.localeCompare(b),
         );
+
         writeList("kategori", next);
         setKategoriList(next);
       }
@@ -62,15 +68,18 @@ export function useSetting() {
 
   async function SaveMetode() {
     const val = normalize(metode);
+
     if (!val) return;
 
     setLoadingMetode(true);
     try {
       const current = readList("metode");
+
       if (!existsInsensitive(current, capitalizeWords(val))) {
         const next = [...current, capitalizeWords(val)].sort((a, b) =>
-          a.localeCompare(b)
+          a.localeCompare(b),
         );
+
         writeList("metode", next);
         setMetodeList(next);
       }
@@ -107,11 +116,13 @@ export function useSetting() {
   // Untuk men-disable tombol jika duplikat / kosong
   const canSaveKategori = useMemo(() => {
     const v = normalize(kategori);
+
     return !!v && !existsInsensitive(kategoriList, v);
   }, [kategori, kategoriList]);
 
   const canSaveMetode = useMemo(() => {
     const v = normalize(metode);
+
     return !!v && !existsInsensitive(metodeList, v);
   }, [metode, metodeList]);
 

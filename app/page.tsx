@@ -1,15 +1,16 @@
 "use client";
 
-import HomeLoading from "@/components/HomeLoading";
-import { useStorage } from "@/src/context/StorageProvider";
-import { checkUrlSpreadSheet } from "@/src/libs/checkUrl";
 import { Button } from "@heroui/button";
 import { Card, CardBody } from "@heroui/card";
 import { Input } from "@heroui/input";
 import { Alert } from "@heroui/alert";
-import { AddUrl } from "@/src/libs/localstorage";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
+
+import { AddUrl } from "@/src/libs/localstorage";
+import { checkUrlSpreadSheet } from "@/src/libs/checkUrl";
+import { useStorage } from "@/src/context/StorageProvider";
+import HomeLoading from "@/components/HomeLoading";
 import ContactDev from "@/components/contact";
 
 export type metadataType = {
@@ -52,12 +53,15 @@ export default function Home() {
 
   const handleSubmit = useCallback(async () => {
     const ok = checkUrlSpreadSheet(url);
+
     if (!ok) {
       setError("URL Spreadsheet tidak valid");
+
       return;
     }
     if (!key) {
       setError("Key Access tidak valid");
+
       return;
     }
     try {
@@ -72,8 +76,10 @@ export default function Home() {
         },
       });
       const data = await res.json();
+
       if (!data.success) {
         setError(data.message);
+
         return;
       }
       if (data.success) {
@@ -121,34 +127,34 @@ export default function Home() {
               <div className="w-full flex flex-col gap-4">
                 <Input
                   id="url"
-                  type="text"
                   label="Masukkan URL SpreadSheet"
+                  placeholder="https://docs.google.com/spreadsheets/d/1Ielw3pi..."
+                  size="md"
+                  type="text"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-                  placeholder="https://docs.google.com/spreadsheets/d/1Ielw3pi..."
-                  size="md"
                 />
               </div>
               <div className="w-full flex flex-col gap-4">
                 <Input
                   id="key"
-                  type="text"
                   label="Masukkan Key Access Kamu"
+                  placeholder="ACCESS808"
+                  size="md"
+                  type="text"
                   value={key}
                   onChange={(e) => setKey(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-                  placeholder="ACCESS808"
-                  size="md"
                 />
               </div>
               <div className="flex w-full justify-center mt-2">
                 <Button
-                  variant="shadow"
-                  color="success"
-                  onPress={handleSubmit}
                   className="w-[70%] font-semibold"
+                  color="success"
                   isDisabled={!url || !key}
+                  variant="shadow"
+                  onPress={handleSubmit}
                 >
                   Access Dashboard
                 </Button>

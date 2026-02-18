@@ -1,6 +1,4 @@
 "use client";
-import HomeLoading from "@/components/HomeLoading";
-import { useStorage } from "@/src/context/StorageProvider";
 import { Button } from "@heroui/button";
 import { Card, CardBody } from "@heroui/card";
 import { Select, SelectItem } from "@heroui/select";
@@ -15,16 +13,20 @@ import {
 import { DatePicker } from "@heroui/date-picker";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { useLaporan } from "@/src/hooks/useLaporan";
 import {
   CalendarDate,
   DateValue,
   getLocalTimeZone,
 } from "@internationalized/date";
+
+import { useLaporan } from "@/src/hooks/useLaporan";
+import { useStorage } from "@/src/context/StorageProvider";
+import HomeLoading from "@/components/HomeLoading";
 import { getSpreadSheetId } from "@/src/libs/checkUrl";
 
 function ddmmyyyyToTime(t: string): number {
   const [dd, mm, yyyy] = t.split("-").map(Number);
+
   return new Date(yyyy, (mm ?? 1) - 1, dd ?? 1).getTime();
 }
 function calDateToDDMMYYYY(d: CalendarDate | null): string {
@@ -33,6 +35,7 @@ function calDateToDDMMYYYY(d: CalendarDate | null): string {
   const dd = String(js.getDate()).padStart(2, "0");
   const mm = String(js.getMonth() + 1).padStart(2, "0");
   const yy = js.getFullYear();
+
   return `${dd}-${mm}-${yy}`;
 }
 
@@ -43,7 +46,7 @@ export default function LaporanDashboard() {
   const enabled = hydrated && haveUrl && Boolean(url);
   const { data, loading, error, refetch, setData, initialLoad } = useLaporan(
     url,
-    enabled
+    enabled,
   );
   const router = useRouter();
   const [jenis, setJenis] = useState<"" | "Pemasukan" | "Pengeluaran">("");
@@ -55,6 +58,7 @@ export default function LaporanDashboard() {
   async function handleDelete(row: any) {
     if (!row?.id) return;
     const prev = data;
+
     setDeletingId(row.id);
     setData(prev.filter((x: any) => x.id !== row.id));
 
@@ -65,6 +69,7 @@ export default function LaporanDashboard() {
         idrow: String(row.id),
       }).toString();
       const res = await fetch(`/api/actionsheet?${qs}`, { method: "DELETE" });
+
       if (!res.ok) {
         setData(prev);
       }
@@ -89,12 +94,15 @@ export default function LaporanDashboard() {
   ];
   const kategoriOptions = useMemo(() => {
     const set = new Set(defaultKategori); // default dulu
+
     if (Array.isArray(data)) {
       data.forEach((r) => {
         const k = String(r?.kategori ?? "").trim();
+
         if (k) set.add(k);
       });
     }
+
     return Array.from(set).sort();
   }, [data]);
 
@@ -103,7 +111,7 @@ export default function LaporanDashboard() {
       { key: "", label: "Semua" },
       ...kategoriOptions.map((k) => ({ key: k, label: k })),
     ],
-    [kategoriOptions]
+    [kategoriOptions],
   );
 
   const filteredData = useMemo(() => {
@@ -115,20 +123,22 @@ export default function LaporanDashboard() {
       rows.splice(
         0,
         rows.length,
-        ...rows.filter((r) => r.kategori === kategori)
+        ...rows.filter((r) => r.kategori === kategori),
       );
     if (tanggal) {
       const target = calDateToDDMMYYYY(tanggal);
+
       rows.splice(
         0,
         rows.length,
-        ...rows.filter((r) => String(r.tanggal) === target)
+        ...rows.filter((r) => String(r.tanggal) === target),
       );
     }
 
     rows.sort((a, b) => {
       const ta = ddmmyyyyToTime(String(a.tanggal));
       const tb = ddmmyyyyToTime(String(b.tanggal));
+
       return ta - tb; // selalu ascending dulu (Terlama → Terbaru)
     });
 
@@ -157,14 +167,15 @@ export default function LaporanDashboard() {
           <CardBody>
             <div className="flex flex-row flex-wrap justify-around items-center gap-2">
               <Select
-                size="sm"
+                className="w-[45%]"
                 label="Jenis Laporan"
                 placeholder="Pilih Jenis"
-                className="w-[45%]"
                 selectedKeys={jenis ? new Set([jenis]) : new Set()}
+                size="sm"
                 onSelectionChange={(keys) => {
                   const val =
                     keys === "all" ? "" : String(Array.from(keys)[0] ?? "");
+
                   setJenis(val as "" | "Pemasukan" | "Pengeluaran");
                 }}
               >
@@ -174,14 +185,15 @@ export default function LaporanDashboard() {
               </Select>
 
               <Select
-                size="sm"
+                className="w-[45%]"
                 label="Urutan Laporan"
                 placeholder="Pilih Urutan"
-                className="w-[45%]"
                 selectedKeys={urut ? new Set([urut]) : new Set()}
+                size="sm"
                 onSelectionChange={(keys) => {
                   const val =
                     keys === "all" ? "" : String(Array.from(keys)[0] ?? "");
+
                   setUrut((val as "" | "Terbaru" | "Terlama") || "Terbaru");
                 }}
               >
@@ -190,15 +202,16 @@ export default function LaporanDashboard() {
               </Select>
 
               <Select
-                size="sm"
-                label="Kategori"
-                placeholder="Pilih Kategori"
                 className="w-[45%]"
                 items={kategoriItems}
+                label="Kategori"
+                placeholder="Pilih Kategori"
                 selectedKeys={kategori ? new Set([kategori]) : new Set()}
+                size="sm"
                 onSelectionChange={(keys) => {
                   const val =
                     keys === "all" ? "" : String(Array.from(keys)[0] ?? "");
+
                   setKategori(val);
                 }}
               >
@@ -223,9 +236,9 @@ export default function LaporanDashboard() {
         <Table
           aria-label="Tabel Laporan"
           className="md:w-[50%] mx-auto"
-          radius="sm"
-          maxTableHeight={data.length <= 3 ? 250 : 400}
           isVirtualized={true}
+          maxTableHeight={data.length <= 3 ? 250 : 400}
+          radius="sm"
           rowHeight={40}
         >
           <TableHeader>
@@ -265,10 +278,10 @@ export default function LaporanDashboard() {
                 <TableCell className="whitespace-nowrap">
                   <Button
                     color="danger"
+                    isDisabled={deletingId === item.id}
+                    isLoading={deletingId === item.id}
                     size="sm"
                     onPress={() => handleDelete(item)}
-                    isLoading={deletingId === item.id}
-                    isDisabled={deletingId === item.id}
                   >
                     Hapus
                   </Button>

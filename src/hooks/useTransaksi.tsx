@@ -1,5 +1,4 @@
 import { ChangeEvent, useState } from "react";
-import { useStorage } from "../context/StorageProvider";
 import {
   CalendarDate,
   DateValue,
@@ -7,12 +6,15 @@ import {
   parseDate,
 } from "@internationalized/date";
 
+import { useStorage } from "../context/StorageProvider";
+
 function toDDMMYYYY(d: CalendarDate | null): string {
   if (!d) return "";
   const js = d.toDate(getLocalTimeZone());
   const dd = String(js.getDate()).padStart(2, "0");
   const mm = String(js.getMonth() + 1).padStart(2, "0");
   const yyyy = js.getFullYear();
+
   return `${dd}-${mm}-${yyyy}`;
 }
 
@@ -42,9 +44,10 @@ export function useTransaksi() {
   });
 
   const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
+
     setFormValue((p) => ({
       ...p,
       [name]:
@@ -62,6 +65,7 @@ export function useTransaksi() {
     (name: "kategori" | "jenis" | "metode") =>
     (keys: "all" | Set<React.Key>) => {
       const first = keys === "all" ? "" : String(Array.from(keys)[0] ?? "");
+
       setFormValue((p) => ({ ...p, [name]: first }));
     };
 
@@ -94,7 +98,7 @@ export function useTransaksi() {
       setIsSuccess(success);
       setMessage(
         json?.message ||
-          (success ? "Berhasil menyimpan data." : "Gagal menyimpan data.")
+          (success ? "Berhasil menyimpan data." : "Gagal menyimpan data."),
       );
       setShowAlert(true);
 
@@ -117,6 +121,7 @@ export function useTransaksi() {
       setPending(false);
     }
   };
+
   return {
     formValue,
     handleChange,

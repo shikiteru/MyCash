@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+
 import { getSpreadSheetId } from "../libs/checkUrl";
 
 type Row = any;
@@ -16,12 +17,14 @@ export function useLaporan(url?: string, enabled = false) {
     if (!enabled || !url) return;
 
     const ac = new AbortController();
+
     (async () => {
       try {
         if (initialLoad) setLoading(true);
         setError(null);
 
         const spreadsheetId = getSpreadSheetId(url);
+
         if (!spreadsheetId) throw new Error("Spreadsheet ID tidak valid");
 
         const res = await fetch(`/api/laporan?id=${spreadsheetId}`, {
@@ -34,6 +37,7 @@ export function useLaporan(url?: string, enabled = false) {
 
         if (ac.signal.aborted) return;
         const rows: Row[] = Array.isArray(json) ? json : (json.data ?? []);
+
         setData(rows ?? []);
       } catch (e) {
         if (!(e instanceof DOMException && e.name === "AbortError"))
@@ -58,6 +62,6 @@ export function useLaporan(url?: string, enabled = false) {
       setData,
       initialLoad,
     }),
-    [data, loading, error, refetch, initialLoad]
+    [data, loading, error, refetch, initialLoad],
   );
 }

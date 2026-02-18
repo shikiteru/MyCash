@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import moment from "moment";
+
 import { checkUrlSpreadSheet, getSpreadSheetId } from "@/src/libs/checkUrl";
 import { ReadAll } from "@/src/libs/sheets";
 
 export async function POST(req: NextRequest) {
   let body: any = {};
+
   try {
     body = await req.json();
   } catch {
@@ -16,7 +18,7 @@ export async function POST(req: NextRequest) {
   if (!url) {
     return NextResponse.json(
       { error: "Body harus JSON dengan field 'url' (string)" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -26,6 +28,7 @@ export async function POST(req: NextRequest) {
     }
 
     const spreadsheetId = getSpreadSheetId(url);
+
     if (!spreadsheetId) {
       return NextResponse.json({ error: "Url tidak valid" }, { status: 400 });
     }
@@ -43,6 +46,7 @@ export async function POST(req: NextRequest) {
     const now = moment();
     const dataBulanIni = data.filter((i: any) => {
       const m = moment(String(i.tanggal), "DD-MM-YYYY", true);
+
       return (
         m.isValid() && m.month() === now.month() && m.year() === now.year()
       );
@@ -69,9 +73,10 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     console.error(error);
+
     return NextResponse.json(
       { error: "Gagal mengambil data" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

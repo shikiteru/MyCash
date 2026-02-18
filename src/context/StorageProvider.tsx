@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
+
 import { getUrl } from "../libs/localstorage";
 
 type Ctx = {
@@ -24,6 +25,7 @@ export function StorageProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const u = getUrl("url");
     const k = getUrl("key");
+
     if (u) {
       setUrlSheet(u);
       setHaveUrl(true);
@@ -45,6 +47,8 @@ export function StorageProvider({ children }: { children: React.ReactNode }) {
 
 export const useStorage = () => {
   const ctx = useContext(StorageContext);
+
   if (!ctx) throw new Error("useStorage must be used within StorageProvider");
+
   return ctx;
 };
